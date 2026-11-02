@@ -1,6 +1,6 @@
-# PoseCapture: Posed Sprite Sheet Generator
+# PoseCapture
 
-**Turn video motion into game-ready character sprite sheets, right inside ComfyUI.**
+**Extract, track and retarget character motion from video, entirely inside ComfyUI.**
 
 Source: https://github.com/Eloque/PoseCapture
 
@@ -59,9 +59,9 @@ walk cycle the clip must hold at least two whole steps after `start` plus one fr
 The render takes about 1-2 seconds per frame on a CPU (65 frames: 1-2 minutes). Conventions: OpenPose R side
 (2, 3, 4, 8, 9, 10) = the near side, toward the camera; the character faces right.
 
-## The three example moves
+## The three moves of the Posed Sprite Sheet Generator V2
 
-The settings that made the example renders (the inputs are in the workflow bundle: `inputs/tracks/` and
+The settings that made the V2 renders (the inputs are in the V2 workflow bundle, https://civitai.com/models/3021972: `inputs/tracks/` and
 `inputs/scail_cop/`; copy both into `ComfyUI/input/`):
 
 | Move | Fit: canvas / hip_x / fixed_shift / pad_top | Render: crop_h / crop_off | Pad: still, cx / y0 / y1 / keep_size |
@@ -78,32 +78,24 @@ gives the numbers above for the example character; check it for yours.
 
 ## Example workflows
 
-Two workflows, because a move is extracted once and fitted to every character:
+Three workflows, in ComfyUI's template browser under PoseCapture. A move is extracted once and fitted to every
+character, so the chain is split in two; the third runs both in one go.
 
 - `1_extract_poses_from_video.json` (**once per move**): Load Video (VideoHelperSuite) -> Scan Video Poses -> Repair
   Pose Scan -> Track from Pose Scan -> **Save Skeleton Track** (`ComfyUI/output/pss_tracks/<name>_vN/`), with the scan
-  overlay and the track preview as check videos and the scan saved for re-cutting. Example input:
-  `example_inputs/sprint_kicks_side_720p.mp4` (CC BY 3.0, see `example_inputs/ATTRIBUTION.md`): copy it into
-  `ComfyUI/input/` or upload it in Load Video. About 1 minute on a CPU.
+  overlay and the track preview as check videos, **Preview Skeleton Track**, and the scan saved for re-cutting. About
+  1.5 minutes on a CPU.
 - `2_fit_track_to_character.json` (**once per character**): **Load Skeleton Track** (the folder workflow 1 printed,
   e.g. `pss_tracks/sprint_kicks_v1`) + Load Image -> DWPose Estimator (comfyui_controlnet_aux) -> Fit Track to
   Character -> Render SCAIL Cylinders -> pose video (mp4) + pose frames. For another character change only the picture.
-  The example picture is `cop_on_white.png` of the Posed Sprite Sheet Generator V2 bundle. About 1-2 minutes on a CPU.
+  About 3 minutes on a CPU.
+- `3_video_to_character_one_graph.json`: workflows 1 and 2 as one graph, video in, fitted cylinder pose video out.
+
+**Example inputs** (copy them into `ComfyUI/input/`): `example_inputs/sprint_kicks_side_720p.mp4` (CC BY 3.0, see
+`example_inputs/ATTRIBUTION.md`), and the two example characters `cop_on_white.png` and `mannequin_on_white.png`.
 
 **The character picture:** 768 x 1024, the character side view facing right, whole body, on white. The fit takes the
 figure's height and feet line from where it stands in this picture, and its bone lengths from its DWPose keypoints.
-
-- `minimal_workflow.json`: the bare minimum, no models: Load Skeleton Track (the fitted short uppercut) -> Render SCAIL
-  Cylinders -> Save Image, and Load Image (its side still) -> Pad Still to Pose -> Save Image.
-- `example_workflow.json`: Load Skeleton Track (source) -> Fit Track to Character -> Render SCAIL Cylinders -> Video
-  Combine (needs ComfyUI-VideoHelperSuite) + Save Image, and Load Image -> Pad Still to Pose -> Save Image.
-
-Both read the tracks from `ComfyUI/input/tracks/` (copy the bundle's `inputs/tracks/` there; the example also needs
-`inputs/scail_cop/` for the keypoints json) and the side still by its plain name `short_uppercut_side_raw.png`: load
-it with Load Image's "choose file to upload" (Load Image only lists files at the top of the input folder).
-
-The pose frames and the padded still are the pose video and the reference image of the SCAIL-Preview workflows of the
-Civitai bundle.
 
 ## Install
 

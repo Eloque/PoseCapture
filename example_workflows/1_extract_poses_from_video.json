@@ -123,7 +123,7 @@
    "properties": {
     "Node name for S&R": "PSS_ScanVideoPoses",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     "",
@@ -175,7 +175,7 @@
    "properties": {
     "Node name for S&R": "PSS_RepairPoseScan",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     true,
@@ -241,7 +241,7 @@
    "properties": {
     "Node name for S&R": "PSS_TrackFromPoseScan",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     "one-shot",
@@ -290,7 +290,7 @@
    "properties": {
     "Node name for S&R": "PSS_SaveSkeletonTrack",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     "pss_tracks",
@@ -329,7 +329,7 @@
    "properties": {
     "Node name for S&R": "PSS_SavePoseScan",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     "pss_scans",
@@ -489,7 +489,7 @@
    "properties": {
     "Node name for S&R": "PSS_PreviewSkeletonTrack",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     15.0,
@@ -522,7 +522,7 @@
     "ver": "0.37.0"
    },
    "widgets_values": [
-    "## 1 / 2: Extract the poses from a video (once per move)\n\nTurns a side-view video of a person into a skeleton track: a folder of keypoints, feet and ground contact that workflow 2 fits to any character. Run this once per move.\n\n1. **Load Video**: one person seen from the side, whole body in frame, static camera. Example: `example_inputs/sprint_kicks_side_720p.mp4` from the pack (\"Stationary high stepping alternating sprint kicks (side view)\" by Wellman Wellness Training, CC BY 3.0; see `example_inputs/ATTRIBUTION.md`). Copy it into `ComfyUI/input/` or upload it here. Every 2nd frame, 81 frames.\n2. **Scan Video Poses**: DWPose with the feet, about 1 s per frame on a CPU. Check *Scan overlay*.\n3. **Repair Pose Scan**: left/right label flips, lost points, flung foot points.\n4. **Track from Pose Scan**: *one-shot* (in place: kicks, punches) or *walk cycle* (+ *start*; the period is found automatically). One ground line, planted feet locked, mirrored to face right, near side = R. Check *Track preview*: orange = near limbs, blue = far, green dot = planted foot.\n**Preview Skeleton Track** plays the generated poses as an animation inside the node (frame number top left, same colours).\n5. **Save Skeleton Track** writes `ComfyUI/output/pss_tracks/sprint_kicks_v1/` (a new `_vN` every run, never overwritten). Put that folder name into workflow 2.\n\n*Save Pose Scan* keeps the slow scan, so you can cut other moves from it with **Load Pose Scan** -> Track from Pose Scan without scanning again."
+    "## 1: Extract the poses from a video (once per move)\n\nTurns a side-view video of a person into a skeleton track: a folder of keypoints, feet and ground contact that workflow 2 fits to any character. Run this once per move.\n\n1. **Load Video**: one person seen from the side, whole body in frame, static camera. Example: `example_inputs/sprint_kicks_side_720p.mp4` from the pack (\"Stationary high stepping alternating sprint kicks (side view)\" by Wellman Wellness Training, CC BY 3.0; see `example_inputs/ATTRIBUTION.md`). Copy it into `ComfyUI/input/` or upload it here. Every 2nd frame, 81 frames.\n2. **Scan Video Poses**: DWPose with the feet, about 1 s per frame on a CPU. Check *Scan overlay*.\n3. **Repair Pose Scan**: left/right label flips, lost points, flung foot points.\n4. **Track from Pose Scan**: *one-shot* (in place: kicks, punches) or *walk cycle* (+ *start*; the period is found automatically). One ground line, planted feet locked, mirrored to face right, near side = R. Check *Track preview*: orange = near limbs, blue = far, green dot = planted foot.\n**Preview Skeleton Track** plays the generated poses as an animation inside the node (frame number top left, same colours).\n5. **Save Skeleton Track** writes `ComfyUI/output/pss_tracks/sprint_kicks_v1/` (a new `_vN` every run, never overwritten). Put that folder name into workflow 2.\n\n*Save Pose Scan* keeps the slow scan, so you can cut other moves from it with **Load Pose Scan** -> Track from Pose Scan without scanning again."
    ],
    "title": "Read me"
   }

@@ -1,7 +1,7 @@
 [project]
 name = "PoseCapture"
-description = "Turn video motion into game-ready character sprite sheets, right inside ComfyUI. Video of a person -> cleaned side-view skeleton track (DWPose with feet, planted feet, one ground line) -> fitted to your character -> z-buffered cylinder pose frames for SCAIL-Preview."
-version = "1.2.0"
+description = "Extract, track and retarget character motion from video, entirely inside ComfyUI: video of a person -> cleaned side-view skeleton track (DWPose with feet, planted feet, one ground line) -> fitted to your character -> z-buffered cylinder pose frames for SCAIL-Preview."
+version = "1.2.1"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = ["numpy", "pillow"]
@@ -14,5 +14,5 @@ Repository = "https://github.com/Eloque/PoseCapture"
 [tool.comfy]
 PublisherId = "eloque"
 DisplayName = "Extract, track and retarget character motion from video"
-Icon = ""
+Icon = "https://raw.githubusercontent.com/Eloque/PoseCapture/main/docs/icon.png"
 includes = []

@@ -41,7 +41,7 @@
    "properties": {
     "Node name for S&R": "PSS_LoadSkeletonTrack",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     "pss_tracks/sprint_kicks_v1"
@@ -191,7 +191,7 @@
    "properties": {
     "Node name for S&R": "PSS_FitTrackToCharacter",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     "",
@@ -264,7 +264,7 @@
    "properties": {
     "Node name for S&R": "PSS_SaveSkeletonTrack",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     "pss_tracks",
@@ -311,7 +311,7 @@
    "properties": {
     "Node name for S&R": "PSS_RenderSCAILCylinders",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     768,
@@ -452,7 +452,7 @@
    "properties": {
     "Node name for S&R": "PSS_PreviewSkeletonTrack",
     "cnr_id": "PoseCapture",
-    "ver": "1.2.0"
+    "ver": "1.2.1"
    },
    "widgets_values": [
     15.0,
@@ -485,7 +485,7 @@
     "ver": "0.37.0"
    },
    "widgets_values": [
-    "## 2 / 2: Fit a track to a character -> SCAIL cylinder pose video (once per character)\n\n1. **Load Skeleton Track**: the folder workflow 1 printed, e.g. `pss_tracks/sprint_kicks_v1` (looked up in `ComfyUI/input/`, then `ComfyUI/output/`).\n2. **Load Image**: your character, side view, facing right, whole body, on white. The example uses `cop_on_white.png` from the Posed Sprite Sheet Generator V2 bundle.\n3. **DWPose Estimator** (comfyui_controlnet_aux): the character's keypoints; the fit takes its bone lengths from them.\n4. **Fit Track to Character**: every bone keeps its direction per frame and takes the character's length. *canvas* = width (height 1024 + *pad_top*), *hip_x* = where the hips stay, *fixed_shift* = one shift for the whole clip (walks). Check *Fit check*.\n**Preview Skeleton Track** plays the fitted poses (the character's proportions) inside the node.\n5. **Render SCAIL Cylinders**: the pose video SCAIL-Preview takes (mp4 + PNG frames), z-buffered so the near limbs stay in front.\n\nSame track, another character: change only the picture and run again."
+    "## 2: Fit a track to a character -> SCAIL cylinder pose video (once per character)\n\n1. **Load Skeleton Track**: the folder workflow 1 printed, e.g. `pss_tracks/sprint_kicks_v1` (looked up in `ComfyUI/input/`, then `ComfyUI/output/`).\n2. **Load Image**: your character, side view, facing right, whole body, on white. Example: `cop_on_white.png` or `mannequin_on_white.png` from the pack's `example_inputs/`, copied into `ComfyUI/input/`.\n3. **DWPose Estimator** (comfyui_controlnet_aux): the character's keypoints; the fit takes its bone lengths from them.\n4. **Fit Track to Character**: every bone keeps its direction per frame and takes the character's length. *canvas* = width (height 1024 + *pad_top*), *hip_x* = where the hips stay, *fixed_shift* = one shift for the whole clip (walks). Check *Fit check*.\n**Preview Skeleton Track** plays the fitted poses (the character's proportions) inside the node.\n5. **Render SCAIL Cylinders**: the pose video SCAIL-Preview takes (mp4 + PNG frames), z-buffered so the near limbs stay in front.\n\nSame track, another character: change only the picture and run again."
    ],
    "title": "Read me"
   }
