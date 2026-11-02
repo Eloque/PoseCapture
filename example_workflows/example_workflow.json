@@ -1,0 +1,511 @@
+{
+ "id": "posecapture-example",
+ "revision": 0,
+ "last_node_id": 10,
+ "last_link_id": 7,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "PSS_LoadSkeletonTrack",
+   "pos": [
+    600,
+    40
+   ],
+   "size": [
+    360,
+    130
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "track",
+     "type": "PSS_SCAIL_TRACK",
+     "links": [
+      1
+     ]
+    },
+    {
+     "name": "frames",
+     "type": "INT",
+     "links": []
+    },
+    {
+     "name": "info",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PSS_LoadSkeletonTrack",
+    "cnr_id": "PoseCapture",
+    "ver": "1.2.0"
+   },
+   "widgets_values": [
+    "tracks/short_uppercut/source"
+   ],
+   "title": "Load Skeleton Track (source short uppercut)"
+  },
+  {
+   "id": 2,
+   "type": "PSS_FitTrackToCharacter",
+   "pos": [
+    600,
+    230
+   ],
+   "size": [
+    360,
+    300
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "track",
+     "type": "PSS_SCAIL_TRACK",
+     "link": 1
+    },
+    {
+     "name": "char_keypoints",
+     "type": "POSE_KEYPOINT",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "fitted_track",
+     "type": "PSS_SCAIL_TRACK",
+     "links": [
+      3
+     ]
+    },
+    {
+     "name": "check",
+     "type": "IMAGE",
+     "links": [
+      2
+     ]
+    },
+    {
+     "name": "fit_info",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PSS_FitTrackToCharacter",
+    "cnr_id": "PoseCapture",
+    "ver": "1.2.0"
+   },
+   "widgets_values": [
+    "scail_cop/cop/cop_keypoints.json",
+    1024,
+    347.0,
+    false,
+    0,
+    0
+   ],
+   "title": "Fit Track to Character"
+  },
+  {
+   "id": 3,
+   "type": "PreviewImage",
+   "pos": [
+    600,
+    600
+   ],
+   "size": [
+    360,
+    260
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 2
+    }
+   ],
+   "outputs": [],
+   "properties": {
+    "Node name for S&R": "PreviewImage",
+    "cnr_id": "comfy-core",
+    "ver": "0.37.0"
+   },
+   "widgets_values": [],
+   "title": "Fit check"
+  },
+  {
+   "id": 4,
+   "type": "PSS_RenderSCAILCylinders",
+   "pos": [
+    1000,
+    40
+   ],
+   "size": [
+    330,
+    340
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "track",
+     "type": "PSS_SCAIL_TRACK",
+     "link": 3
+    }
+   ],
+   "outputs": [
+    {
+     "name": "pose_frames",
+     "type": "IMAGE",
+     "links": [
+      4,
+      5
+     ]
+    },
+    {
+     "name": "params",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PSS_RenderSCAILCylinders",
+    "cnr_id": "PoseCapture",
+    "ver": "1.2.0"
+   },
+   "widgets_values": [
+    768,
+    0,
+    -1,
+    1550.0,
+    200.0,
+    120.0,
+    60.0,
+    21.5,
+    55.0
+   ],
+   "title": "Render SCAIL Cylinders"
+  },
+  {
+   "id": 5,
+   "type": "VHS_VideoCombine",
+   "pos": [
+    1370,
+    40
+   ],
+   "size": [
+    400,
+    680
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 4
+    },
+    {
+     "name": "audio",
+     "type": "AUDIO",
+     "link": null
+    },
+    {
+     "name": "meta_batch",
+     "type": "VHS_BatchManager",
+     "link": null
+    },
+    {
+     "name": "vae",
+     "type": "VAE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "Filenames",
+     "type": "VHS_FILENAMES",
+     "links": []
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "VHS_VideoCombine",
+    "cnr_id": "comfyui-videohelpersuite",
+    "ver": "1.7.8"
+   },
+   "widgets_values": [
+    25.0,
+    0,
+    "pss_example/pose_video",
+    "video/h264-mp4",
+    false,
+    true
+   ],
+   "title": "Pose video (mp4)"
+  },
+  {
+   "id": 6,
+   "type": "SaveImage",
+   "pos": [
+    1810,
+    40
+   ],
+   "size": [
+    420,
+    460
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 5
+    }
+   ],
+   "outputs": [],
+   "properties": {
+    "Node name for S&R": "SaveImage",
+    "cnr_id": "comfy-core",
+    "ver": "0.37.0"
+   },
+   "widgets_values": [
+    "pss_example/pose"
+   ],
+   "title": "Save pose frames"
+  },
+  {
+   "id": 7,
+   "type": "LoadImage",
+   "pos": [
+    1000,
+    800
+   ],
+   "size": [
+    330,
+    420
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": [
+      6
+     ]
+    },
+    {
+     "name": "MASK",
+     "type": "MASK",
+     "links": []
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "LoadImage",
+    "cnr_id": "comfy-core",
+    "ver": "0.37.0"
+   },
+   "widgets_values": [
+    "short_uppercut_side_raw.png",
+    "image"
+   ],
+   "title": "Load Image (side still)"
+  },
+  {
+   "id": 8,
+   "type": "PSS_PadStillToPose",
+   "pos": [
+    1370,
+    800
+   ],
+   "size": [
+    400,
+    300
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": 6
+    },
+    {
+     "name": "pose_frames",
+     "type": "IMAGE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "padded",
+     "type": "IMAGE",
+     "links": [
+      7
+     ]
+    },
+    {
+     "name": "info",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PSS_PadStillToPose",
+    "cnr_id": "PoseCapture",
+    "ver": "1.2.0"
+   },
+   "widgets_values": [
+    289.0,
+    40,
+    691,
+    false,
+    "manual",
+    0.067,
+    0.022
+   ],
+   "title": "Pad Still to Pose"
+  },
+  {
+   "id": 9,
+   "type": "SaveImage",
+   "pos": [
+    1810,
+    800
+   ],
+   "size": [
+    420,
+    420
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 7
+    }
+   ],
+   "outputs": [],
+   "properties": {
+    "Node name for S&R": "SaveImage",
+    "cnr_id": "comfy-core",
+    "ver": "0.37.0"
+   },
+   "widgets_values": [
+    "pss_example/padded"
+   ],
+   "title": "Save padded still"
+  },
+  {
+   "id": 10,
+   "type": "MarkdownNote",
+   "pos": [
+    40,
+    40
+   ],
+   "size": [
+    520,
+    820
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [],
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.37.0"
+   },
+   "widgets_values": [
+    "## Posed Sprite Sheet: fit a move to a character, render the SCAIL pose frames\n\nExample: the right-hand short uppercut fitted to the example cop. CPU only, no models; about 2 minutes.\n\n1. **Place the inputs**: copy the workflow bundle's `inputs/tracks/` and `inputs/scail_cop/` folders into `ComfyUI/input/`, and load the still `inputs/scail_cop/refs/short_uppercut_side_raw.png` in Load Image (choose file to upload).\n2. **Queue**. Fit Track to Character re-proportions the move's source skeleton to the cop (his DWPose keypoints json); Render SCAIL Cylinders draws the z-buffered cylinder frames; Pad Still to Pose puts the side still on the pose figure's frame-0 box.\n3. **Results** in `ComfyUI/output/pss_example/`: the pose frames + an mp4, and the padded still. They are the pose video and the reference image of the SCAIL-Preview workflow.\n\n**Your own character**: connect the POSE_KEYPOINT output of a DWPose node (comfyui_controlnet_aux) on your front-view picture to `char_keypoints` (it overrides the json path), and read cx / y0 / y1 off your pose frame 0 (or set Pad mode to auto and connect the pose frames).\n\n**The three example moves** (Fit: canvas, hip_x, fixed_shift, pad_top; Render: crop_h, crop_off; Pad: cx, y0, y1, keep_size):\n\n| Move | Fit | Render | Pad (still) |\n|---|---|---|---|\n| short uppercut | 1024, 347, false, 0 | 0, -1 | 289, 40, 691, false (short_uppercut_side_raw) |\n| walk | 1024, 347, **true**, 0 | 0, -1 | 249, 28, 679, false (walk_side_raw) |\n| heavy uppercut | 1240, 420, false, 269 | 768, 0 | 284, 200, 737, **true** (short_uppercut_side_raw) |"
+   ],
+   "title": "Read me"
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   0,
+   2,
+   0,
+   "PSS_SCAIL_TRACK"
+  ],
+  [
+   2,
+   2,
+   1,
+   3,
+   0,
+   "IMAGE"
+  ],
+  [
+   3,
+   2,
+   0,
+   4,
+   0,
+   "PSS_SCAIL_TRACK"
+  ],
+  [
+   4,
+   4,
+   0,
+   5,
+   0,
+   "IMAGE"
+  ],
+  [
+   5,
+   4,
+   0,
+   6,
+   0,
+   "IMAGE"
+  ],
+  [
+   6,
+   7,
+   0,
+   8,
+   0,
+   "IMAGE"
+  ],
+  [
+   7,
+   8,
+   0,
+   9,
+   0,
+   "IMAGE"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.8,
+   "offset": [
+    0,
+    0
+   ]
+  }
+ },
+ "version": 0.4
+}
