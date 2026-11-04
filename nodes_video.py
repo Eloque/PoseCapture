@@ -9,7 +9,7 @@ import os
 
 import numpy as np
 
-from .nodes import CATEGORY, TRACK_TYPE, frames_to_image, image_to_uint8, resolve, track_info
+from .nodes import CATEGORY, TRACK_TYPE, frames_to_image, image_to_uint8, inside, resolve, track_info
 from .pss import preview as pss_prev
 from .pss import scan as pss_scan
 from .pss import swaps as pss_swaps
@@ -36,6 +36,18 @@ def next_dir(base, name):
     d = os.path.join(base, f"{name}_v{n}")
     os.makedirs(d)
     return d
+
+
+def save_dir(folder, name):
+    """a new output/<folder>/<name>_vN folder; folder must stay inside the ComfyUI output folder, name is a plain name"""
+    out = output_dir()
+    folder, name = folder.strip(), name.strip()
+    base = os.path.join(out, folder)
+    if os.path.isabs(folder) or os.path.splitdrive(folder)[0] or not inside(out, base):
+        raise ValueError(f"PoseCapture: folder must be relative to ComfyUI/output/, not {folder!r}")
+    if not name or name in (".", "..") or os.path.basename(name) != name or "/" in name or "\\" in name:
+        raise ValueError(f"PoseCapture: name must be a plain name, not {name!r}")
+    return next_dir(base, name)
 
 
 def read_video(path, start=0, frames=0, every=1, crop=None, wanted=None):
@@ -117,7 +129,7 @@ class PSS_ScanVideoPoses:
         }, "optional": {
             "images": ("IMAGE", {"tooltip": "the video frames (from Load Video)"}),
             "video": ("STRING", {"default": "", "tooltip": "used only when images is not connected: a video file, "
-                                                           "relative to ComfyUI/input or absolute"}),
+                                                           "relative to ComfyUI/input"}),
         }}
 
     def scan(self, crop, start, frames, every, bbox_detector, pose_estimator, overlay_height, images=None, video=""):
@@ -152,7 +164,7 @@ class PSS_ScanVideoPoses:
 
 
 class PSS_LoadPoseScan:
-    DESCRIPTION = "Loads a pose scan saved by Save Pose Scan (keypoints_feet.json), relative to ComfyUI/input or absolute."
+    DESCRIPTION = "Loads a pose scan saved by Save Pose Scan (keypoints_feet.json), relative to ComfyUI/input (else ComfyUI/output)."
     CATEGORY = CATEGORY
     RETURN_TYPES = (SCAN_TYPE, "STRING")
     RETURN_NAMES = ("scan", "info")
@@ -193,7 +205,7 @@ class PSS_SavePoseScan:
                              "name": ("STRING", {"default": "scan"})}}
 
     def save(self, scan, folder, name):
-        d = next_dir(os.path.join(output_dir(), folder), name)
+        d = save_dir(folder, name)
         p = os.path.join(d, "keypoints_feet.json")
         with open(p, "w") as f:
             json.dump({k: v for k, v in scan.items() if not k.startswith("_")}, f)
@@ -317,7 +329,7 @@ class PSS_SaveSkeletonTrack:
                              "name": ("STRING", {"default": "track"})}}
 
     def save(self, track, folder, name):
-        d = next_dir(os.path.join(output_dir(), folder), name)
+        d = save_dir(folder, name)
         with open(os.path.join(d, "keypoints.json"), "w") as f:
             json.dump(track["keypoints"], f)
         if "feet" in track:

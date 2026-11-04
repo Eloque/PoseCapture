@@ -2,6 +2,7 @@
 cycle) -> Fit -> Render, and the stored scan of the same video -> Track -> Fit -> Render, compared with the workflow
 bundle's walk track and walk pose frames.
   python test_video_graph.py SERVER VIDEO STORED_SCAN BUNDLE_DIR TAG REPORT.json COMFY_OUTPUT_DIR
+  VIDEO and STORED_SCAN relative to the server's input folder (since 1.2.2 absolute paths are refused).
 """
 import json, os, sys, time, urllib.request
 import numpy as np
@@ -21,7 +22,7 @@ def get(url):
         return json.loads(r.read())
 
 
-KP = os.path.join(BUNDLE, "inputs/scail_cop/cop/cop_keypoints.json")
+KP = "scail_cop/cop/cop_keypoints.json"   # 1.2.2: node paths are relative to the server's input folder
 TRACK = dict(mode="walk cycle", start=49, frames=57, period=26, face="auto", near_side="auto", remove_travel="auto",
              far_drop=-1.0, ground_tol=12.0, swing_tol=4.0, smooth=0.0, preview_height=720)
 FIT = dict(char_keypoints_json=KP, canvas=1024, hip_x=347.0, fixed_shift=True, pad_top=0, scale_frame=0)

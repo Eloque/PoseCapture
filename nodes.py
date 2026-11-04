@@ -36,17 +36,30 @@ def output_dir_or_none():
         return None
 
 
+def inside(base, path):
+    """True if path (after normalising .. and the like) lies inside base"""
+    base = os.path.abspath(base)
+    return os.path.commonpath([base, os.path.abspath(path)]) == base
+
+
 def resolve(path):
-    """absolute path as given; a relative path is looked up in the ComfyUI input folder, then in the output folder
-    (so a track saved by Save Skeleton Track loads with the folder name it printed, e.g. pss_tracks/kick_v1)"""
+    """a path relative to the ComfyUI input folder, else the output folder (so a track saved by Save Skeleton Track loads
+    with the folder name it printed, e.g. pss_tracks/kick_v1). Absolute paths and paths that leave those folders
+    (e.g. with ..) are refused: put the file into ComfyUI/input/ instead."""
     path = path.strip().strip('"')
-    if os.path.isabs(path):
-        return path
-    p = os.path.join(input_dir(), path)
+    if not path or os.path.isabs(path) or os.path.splitdrive(path)[0]:
+        raise ValueError(f"PoseCapture: use a path relative to ComfyUI/input/ (or output/), not {path!r}")
+    bases = [input_dir()]
     out = output_dir_or_none()
-    if not os.path.exists(p) and out and os.path.exists(os.path.join(out, path)):
-        return os.path.join(out, path)
-    return p
+    if out:
+        bases.append(out)
+    for b in bases:
+        p = os.path.join(b, path)
+        if not inside(b, p):
+            raise ValueError(f"PoseCapture: {path!r} leaves the ComfyUI input/output folder")
+        if os.path.exists(p):
+            return p
+    return os.path.join(bases[0], path)
 
 
 def frames_to_image(frames):
@@ -100,7 +113,7 @@ class PSS_LoadSkeletonTrack:
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {"folder": ("STRING", {"default": "tracks/short_uppercut/fitted",
-                                                   "tooltip": "track folder: relative to ComfyUI/input, else ComfyUI/output (where Save Skeleton Track writes), or absolute"})}}
+                                                   "tooltip": "track folder: relative to ComfyUI/input, else ComfyUI/output (where Save Skeleton Track writes)"})}}
 
     @classmethod
     def IS_CHANGED(cls, folder):

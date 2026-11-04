@@ -71,7 +71,9 @@ def main():
         sys.exit(f"{a.out} exists: new dir per run")
     os.makedirs(a.out)
     N = import_pack()
-    B = os.path.join(a.bundle, "inputs")
+    B = os.path.abspath(os.path.join(a.bundle, "inputs"))
+    a.out = os.path.abspath(a.out)
+    os.chdir(B)   # 1.2.2: node paths must be relative (outside ComfyUI they are relative to the working directory)
     cop_kps = os.path.join(B, "scail_cop", "cop", "cop_keypoints.json")
     with open(cop_kps) as f:
         cop_pose_keypoint = json.load(f)              # same structure as comfyui_controlnet_aux's POSE_KEYPOINT
@@ -84,8 +86,8 @@ def main():
         D = os.path.join(a.out, move)
         os.makedirs(D)
         # 1. Load Skeleton Track (source) -> Fit Track to Character (json file input, and POSE_KEYPOINT input)
-        src, n_src, info = N.PSS_LoadSkeletonTrack().load(os.path.join(B, "tracks", move, "source"))
-        fitted, check, fit_info = N.PSS_FitTrackToCharacter().fit(src, cop_kps, **cfg["fit"])
+        src, n_src, info = N.PSS_LoadSkeletonTrack().load(os.path.join("tracks", move, "source"))
+        fitted, check, fit_info = N.PSS_FitTrackToCharacter().fit(src, os.path.relpath(cop_kps, B), **cfg["fit"])
         fitted_pk, _, _ = N.PSS_FitTrackToCharacter().fit(src, "", char_keypoints=cop_pose_keypoint, **cfg["fit"])
         ref_kp_path = os.path.join(B, "tracks", move, "fitted", "keypoints.json")
         ref_bytes = open(ref_kp_path, "rb").read()
@@ -114,7 +116,7 @@ def main():
         reread = np.stack([np.asarray(Image.open(os.path.join(D, "pose", f"pose_{i:03d}.png"))) for i in range(len(ours))])
         r["pose_png_reread"] = cmp_frames(reread, refs)
         # also render from the bundle's own fitted track folder (Load Skeleton Track -> Render)
-        bt, _, _ = N.PSS_LoadSkeletonTrack().load(os.path.join(B, "tracks", move, "fitted"))
+        bt, _, _ = N.PSS_LoadSkeletonTrack().load(os.path.join("tracks", move, "fitted"))
         img_b, _ = N.PSS_RenderSCAILCylinders().render(bt, **RENDER_DEFAULTS, **cfg["render"])
         r["pose_from_bundle_track"] = cmp_frames(N.image_to_uint8(img_b), refs)
         # 3. Pad Still to Pose (manual, the README numbers) and the optional auto mode from pose frame 0

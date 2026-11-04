@@ -1,7 +1,7 @@
 [project]
 name = "PoseCapture"
 description = "Extract, track and retarget character motion from video, entirely inside ComfyUI: video of a person -> cleaned side-view skeleton track (DWPose with feet, planted feet, one ground line) -> fitted to your character -> z-buffered cylinder pose frames for SCAIL-Preview."
-version = "1.2.1"
+version = "1.2.2"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = ["numpy", "pillow"]
