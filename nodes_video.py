@@ -9,7 +9,7 @@ import os
 
 import numpy as np
 
-from .nodes import CATEGORY, TRACK_TYPE, frames_to_image, image_to_uint8, inside, resolve, track_info
+from .nodes import CATEGORY, TRACK_TYPE, frames_to_image, image_to_uint8, inside, plain_relative, resolve, track_info
 from .pss import preview as pss_prev
 from .pss import scan as pss_scan
 from .pss import swaps as pss_swaps
@@ -39,15 +39,24 @@ def next_dir(base, name):
 
 
 def save_dir(folder, name):
-    """a new output/<folder>/<name>_vN folder; folder must stay inside the ComfyUI output folder, name is a plain name"""
+    """a new output/<folder>/<name>_vN folder; folder must stay inside the ComfyUI output folder (by name and after
+    resolving symlinks), name is a plain name"""
     out = output_dir()
-    folder, name = folder.strip(), name.strip()
-    base = os.path.join(out, folder)
-    if os.path.isabs(folder) or os.path.splitdrive(folder)[0] or not inside(out, base):
+    try:
+        folder = plain_relative(folder)
+    except ValueError:
         raise ValueError(f"PoseCapture: folder must be relative to ComfyUI/output/, not {folder!r}")
-    if not name or name in (".", "..") or os.path.basename(name) != name or "/" in name or "\\" in name:
+    name = name.strip()
+    base = os.path.join(out, folder)
+    if not inside(out, base):
+        raise ValueError(f"PoseCapture: folder must stay inside ComfyUI/output/, not {folder!r}")
+    if (not name or name in (".", "..") or os.path.basename(name) != name or "/" in name or "\\" in name
+            or "\0" in name):
         raise ValueError(f"PoseCapture: name must be a plain name, not {name!r}")
-    return next_dir(base, name)
+    d = next_dir(base, name)
+    if not inside(out, d):     # checked again on the folder that now exists
+        raise ValueError(f"PoseCapture: {d!r} is outside ComfyUI/output/")
+    return d
 
 
 def read_video(path, start=0, frames=0, every=1, crop=None, wanted=None):

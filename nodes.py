@@ -36,19 +36,33 @@ def output_dir_or_none():
         return None
 
 
+def _within(base, path):
+    return os.path.commonpath([base, path]) == base
+
+
 def inside(base, path):
-    """True if path (after normalising .. and the like) lies inside base"""
-    base = os.path.abspath(base)
-    return os.path.commonpath([base, os.path.abspath(path)]) == base
+    """True if path lies inside base, both by name (.. normalised) and after resolving symlinks/junctions, so a link
+    inside base that points outside it is refused too"""
+    base_n, path_n = os.path.abspath(base), os.path.abspath(path)
+    if not _within(base_n, path_n):
+        return False
+    return _within(os.path.realpath(base_n), os.path.realpath(path_n))
+
+
+def plain_relative(path):
+    """the path as typed, if it is a plain relative path: no absolute/drive/UNC/device path, no NUL"""
+    path = path.strip().strip('"')
+    if (not path or "\0" in path or os.path.isabs(path) or os.path.splitdrive(path)[0]
+            or path.startswith(("\\\\", "//", "\\\\?\\", "\\\\.\\"))):
+        raise ValueError(f"PoseCapture: use a path relative to ComfyUI/input/ (or output/), not {path!r}")
+    return path
 
 
 def resolve(path):
     """a path relative to the ComfyUI input folder, else the output folder (so a track saved by Save Skeleton Track loads
-    with the folder name it printed, e.g. pss_tracks/kick_v1). Absolute paths and paths that leave those folders
-    (e.g. with ..) are refused: put the file into ComfyUI/input/ instead."""
-    path = path.strip().strip('"')
-    if not path or os.path.isabs(path) or os.path.splitdrive(path)[0]:
-        raise ValueError(f"PoseCapture: use a path relative to ComfyUI/input/ (or output/), not {path!r}")
+    with the folder name it printed, e.g. pss_tracks/kick_v1). Absolute paths, paths that leave those folders (with ..
+    or through a symlink) and network/device paths are refused: put the file into ComfyUI/input/ instead."""
+    path = plain_relative(path)
     bases = [input_dir()]
     out = output_dir_or_none()
     if out:
